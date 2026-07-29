@@ -10,17 +10,22 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "tarefa")
+@Getter
 public class Tarefa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     private String titulo;
 
+    @Setter
     private String descricao;
 
     private boolean ativo = true;
@@ -48,32 +53,9 @@ public class Tarefa {
         this.criadoEm = criadoEm;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public void alterarStatus(TarefaStatus novoStatus) {
+    this.status = novoStatus;
+}
 
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public boolean getAtivo() {
-        return ativo;
-    }
-
-    public TarefaStatus getStatus() {
-        return status;
-    }
-
-    public LocalDateTime getCriadoEm() {
-        return criadoEm;
-    }
-
-    public void setStatus(TarefaStatus status) {
-        this.status = status;
-    }
 
 }

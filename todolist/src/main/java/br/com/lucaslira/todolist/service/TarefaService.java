@@ -1,7 +1,7 @@
 package br.com.lucaslira.todolist.service;
 
-import org.springframework.boot.data.autoconfigure.web.DataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.lucaslira.todolist.dto.AtualizarStatusTarefaRequest;
@@ -35,21 +35,33 @@ public class TarefaService {
         return TarefaResponse.tarefaDto(tarefa);
     }
 
-    public Page<TarefaResponse> listarTodas(Pageable pageable) {
+    public Page<TarefaResponse> listarTodasTarefas(Pageable pageable) {
         return repository.findAll(pageable).map(TarefaResponse::tarefaDto);
     }
 
-    public void deletar(Long id) {
+    public void deletarTarefa(Long id) {
         Tarefa tarefa = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
         repository.delete(tarefa);
     }
 
+    public TarefaResponse editarTarefa(Long id, TarefaRequest request) {
+        Tarefa tarefaBanco = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
+
+        tarefaBanco.setTitulo(request.titulo());
+        tarefaBanco.setDescricao(request.descricao());
+
+        Tarefa tarefaAtualizada = repository.save(tarefaBanco);
+        return TarefaResponse.tarefaDto(tarefaAtualizada);
+    }
+
     @Transactional
     public TarefaResponse atualizarStatusTarefa(Long id, AtualizarStatusTarefaRequest novoStatus) {
-        Tarefa tarefa = repository.findById(id).orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
+        Tarefa tarefa = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
 
-        tarefa.setStatus(novoStatus.status());
+        tarefa.alterarStatus(novoStatus.status());
 
         return TarefaResponse.tarefaDto(tarefa);
     }
